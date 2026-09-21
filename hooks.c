@@ -4735,6 +4735,10 @@ static void ActionMenu(HWND hwnd)
     KillAltSnapMenu();
     g_mchwnd = KreateMsgWin(MenuWindowProc, TEXT(APP_NAMEA)TEXT("-SClick"), 1);
     state.sclickhwnd = hwnd;
+    // Block Alt autorepeat from now on, not only once WM_INITMENU gave us
+    // the real HMENU: an Alt down that slips through in between would be
+    // queued to us (we become foreground below) and pop the menu down.
+    state.unikeymenu = (HMENU)1;
     // Send message to Open Action Menu
     BringWindowToTop(g_mainhwnd);
     SetForegroundWindow(g_mainhwnd);

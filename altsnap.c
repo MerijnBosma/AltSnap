@@ -226,6 +226,11 @@ void ShowSClickMenu(HWND hwnd, LPARAM param)
         if ( (ACMenuItems>>i)&1 && mnlst[i].action != 0xFF) // Put the action in the HIWORD of wParam
             AppendMenu(menu, mnlst[i].mf, mnlst[i].action<<16, mnlst[i].str);
     }
+    // Drop key messages already queued to us (typically an Alt autorepeat
+    // that got through before the hook started blocking them), otherwise
+    // TrackPopupMenu takes them and pops the menu down immediately.
+    MSG msg;
+    while (PeekMessage(&msg, NULL, WM_KEYFIRST, WM_KEYLAST, PM_REMOVE));
     TrackPopupMenu(menu, GetSystemMetrics(SM_MENUDROPALIGNMENT), pt.x, pt.y, 0, hwnd, NULL);
     DestroyMenu(menu);
     PostMessage(hwnd, WM_CLOSE, 0, 0);
